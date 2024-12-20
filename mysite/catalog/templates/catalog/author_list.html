@@ -1,0 +1,41 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Author List</h1>
+  {% if author_list %}
+    <ul>
+      {% for author in author_list %}
+        <li>
+          <a href="{{ author.get_absolute_url }}">{{ author.first_name }} {{ author.last_name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no authors.</p>
+  {% endif %}
+{% endblock %}
+
+
+
+<!-- Dans le fichier de base (base_generic.html ou book_list.html) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function(){
+    $('#fetchAuthors').click(function(){
+      $.ajax({
+        url: "{% url 'authors' %}",
+        type: 'GET',
+        success: function(data) {
+          $('#authorList').html(data);  // Affiche les livres sans recharger la page
+        },
+        error: function() {
+          alert("An error occurred while fetching the authors.");
+        }
+      });
+    });
+  });
+</script>
+
+<button id="fetchAuthors" class="btn btn-primary">Fetch All authors</button>
+<div id="authorList"></div>  <!-- L'endroit où les livres seront affichés -->

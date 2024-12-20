@@ -1,0 +1,41 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Book List</h1>
+  {% if book_list %}
+    <ul>
+      {% for book in book_list %}
+        <li>
+          <a href="{{ book.get_absolute_url }}">{{ book.title }}</a> ({{ book.author }})
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>There are no books in the library.</p>
+  {% endif %}
+{% endblock %}
+
+
+
+<!-- Dans le fichier de base (base_generic.html ou book_list.html) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function(){
+    $('#fetchBooks').click(function(){
+      $.ajax({
+        url: "{% url 'books' %}",
+        type: 'GET',
+        success: function(data) {
+          $('#bookList').html(data);  // Affiche les livres sans recharger la page
+        },
+        error: function() {
+          alert("An error occurred while fetching the books.");
+        }
+      });
+    });
+  });
+</script>
+
+<button id="fetchBooks" class="btn btn-primary">Fetch All Books</button>
+<div id="bookList"></div>  <!-- L'endroit où les livres seront affichés -->
