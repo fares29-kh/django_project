@@ -38,24 +38,4 @@ class AuthorDetailView(generic.DetailView):
 class BookInstanceDetailView(generic.DetailView):
     """Generic class-based detail view for a book instance."""
     model = BookInstance
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
-import subprocess
-import json
 
-@csrf_exempt
-def github_webhook(request):
-    if request.method == 'POST':
-        payload = json.loads(request.body)
-        # Vérifiez ici le type d'événement si nécessaire
-        # Par exemple, vous pouvez vérifier si c'est un push
-        if payload.get('action') == 'push':
-            # Exécutez vos commandes de déploiement ici
-            try:
-                subprocess.run(['git', 'pull', 'origin', 'main'], check=True)
-                subprocess.run(['docker-compose', 'down'], check=True)
-                subprocess.run(['docker-compose', 'up', '-d', '--build'], check=True)
-                return JsonResponse({'status': 'success'}, status=200)
-            except subprocess.CalledProcessError as e:
-                return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
-    return JsonResponse({'status': 'bad request'}, status=400)
